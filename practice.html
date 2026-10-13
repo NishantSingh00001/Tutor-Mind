@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Practice — TutorMind</title>
+<meta name="description" content="Upload your answer sheet and get it graded against the question and your reference.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600&family=Caveat:wght@500;600;700&family=Nunito:wght@400;500;600;700;800;900&family=Spline+Sans+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="style.css">
+</head><body>
+
+<nav><div class="wrap nav-in">
+  <a href="index.html"><div class="logo"><span class="mk">T</span>TutorMind</div></a>
+  <div class="nav-links"><a href="practice.html" class="active">Practice</a><a href="progress.html">Progress</a><a href="how.html">How it works</a></div>
+  <div class="nav-right"><span class="pro-pill" id="proPill" hidden>★ PRO</span><button class="btn btn-sm" id="unlockBtn">Unlock Pro</button></div>
+</div></nav>
+
+<header class="phead"><div class="wrap">
+  <span class="eyebrow">The grader</span>
+  <h1>Grade a paper</h1>
+  <p>Pick a subject, add the question paper and your reference, then photograph your answers. It shows you what it read before trusting the grade.</p>
+</div></header>
+
+<div class="wrap">
+  <div class="block" style="margin-top:10px">
+    <h3><span class="step-n">1</span>&nbsp;Subject</h3>
+    <div class="subjrow" id="subjrow"></div>
+  </div>
+
+  <div class="pgrid">
+    <div class="block">
+      <h3><span class="step-n">2</span>&nbsp;Question paper <span style="font-weight:600;color:var(--muted);font-size:12px">· optional</span></h3>
+      <p class="sub">A photo or screenshot of the question(s). Helps marking a lot.</p>
+      <div class="drop" id="qdrop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 16V4m0 0 4 4m-4-4L8 8"/><path d="M20 16v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2"/></svg><h4>Add question paper</h4><p>image · optional</p></div>
+      <input type="file" id="qfile" accept="image/*" hidden>
+      <div class="thumbs" id="qthumbs"></div>
+    </div>
+
+    <div class="block">
+      <h3><span class="step-n">3</span>&nbsp;Reference</h3>
+      <p class="sub">What should it mark against?</p>
+      <div class="refmode">
+        <button class="on" data-ref="name" id="refNameBtn">Book name</button>
+        <button data-ref="pdf" id="refPdfBtn">Upload PDF <span class="lockbadge">PRO</span></button>
+      </div>
+      <div id="refNameBox">
+        <input class="inp" id="refText" placeholder="e.g. NCERT History Class 10 — Ch. 2 Nationalism in India">
+        <div class="notice-small">Free: it uses this name plus a live web search for the relevant facts.</div>
+      </div>
+      <div id="refPdfBox" hidden>
+        <div class="drop" id="rdrop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z"/></svg><h4>Add reference PDF</h4><p>a chapter / a few pages works best</p></div>
+        <input type="file" id="rfile" accept="application/pdf" hidden>
+        <div id="rinfo" class="notice-small"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block" style="margin-top:18px">
+    <h3><span class="step-n">4</span>&nbsp;Your answer sheet <span style="font-weight:600;color:var(--red);font-size:12px">· required</span></h3>
+    <p class="sub">Photograph your handwritten answers. <span id="imgLimitNote"></span></p>
+    <div class="drop" id="adrop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14.5 4h-5L8 6H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-4l-1.5-2z"/><circle cx="12" cy="13" r="3.5"/></svg><h4>Add answer photo</h4><p>clear, well-lit, one page per photo</p></div>
+    <input type="file" id="afile" accept="image/*" hidden>
+    <div class="thumbs" id="athumbs"></div>
+  </div>
+
+  <div class="gobar">
+    <button class="btn btn-fill" id="gradeBtn">Grade my paper →</button>
+    <button class="btn" id="demoBtn">See a sample result</button>
+    <span class="usep" id="usep"></span>
+  </div>
+  <div id="msg"></div>
+</div>
+
+<section class="result" id="result" hidden><div class="wrap" id="resultInner"></div></section>
+
+<footer><div class="wrap foot-in"><span>TUTORMIND</span><span><a href="how.html" style="text-decoration:underline">How it works &amp; limits</a></span><span class="mono" style="font-weight:400">grades are guidance, not an official mark</span></div></footer>
+
+<div class="overlay" id="unlockModal" hidden><div class="umodal">
+  <h3>Unlock TutorMind Pro</h3>
+  <p>Pro adds PDF reference grounding, multi-page answer sheets, and unlimited gradings. Enter your code.</p>
+  <input id="codeInput" placeholder="UNLOCK CODE" autocomplete="off">
+  <div class="err" id="codeErr"></div>
+  <div style="display:flex;gap:10px"><button class="btn" id="closeUnlock" style="flex:1;justify-content:center">Cancel</button><button class="btn btn-fill" id="applyCode" style="flex:1;justify-content:center">Unlock</button></div>
+</div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+<script>
+var CONFIG={ PRO_CODE:"TUTORMIND-PRO-2026", FREE_DAILY:3, FREE_ANSWER_IMAGES:1, MAX_PAYLOAD_MB:4.2 };
+var $=function(id){return document.getElementById(id);};
+var SUBJECTS=["Maths","English (Lit)","Grammar","History","Geography","Hindi","Other"];
+var subject="Maths", refMode="name";
+var qImages=[], aImages=[], refPdf=null;
+
+/* pro + limits */
+var PRO_MEM=false;
+function isPro(){if(PRO_MEM)return true;try{return localStorage.getItem("tm_pro")==="1"}catch(e){return false}}
+function today(){return new Date().toISOString().slice(0,10);}
+function usedToday(){try{var o=JSON.parse(localStorage.getItem("tm_use")||"{}");return o.d===today()?(o.n||0):0}catch(e){return 0}}
+function bumpUse(){try{localStorage.setItem("tm_use",JSON.stringify({d:today(),n:usedToday()+1}))}catch(e){}}
+function remain(){return isPro()?"∞":Math.max(0,CONFIG.FREE_DAILY-usedToday());}
+function maxAnswerImgs(){return isPro()?8:CONFIG.FREE_ANSWER_IMAGES;}
+function refreshUi(){
+  $("usep").textContent="Gradings today: "+remain()+(isPro()?"":" / "+CONFIG.FREE_DAILY);
+  $("proPill").hidden=!isPro(); $("unlockBtn").hidden=isPro();
+  $("imgLimitNote").textContent=isPro()?"Add as many pages as you need.":"Free: 1 page. Pro: multiple pages.";
+}
+
+/* subject chips */
+$("subjrow").innerHTML=SUBJECTS.map(function(s){return '<button data-s="'+s+'"'+(s===subject?' class="on"':'')+'>'+s+'</button>';}).join("");
+$("subjrow").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;subject=b.dataset.s;document.querySelectorAll("#subjrow button").forEach(function(x){x.classList.toggle("on",x===b);});});
+
+/* ref mode */
+function setRef(m){refMode=m;$("refNameBtn").classList.toggle("on",m==="name");$("refPdfBtn").classList.toggle("on",m==="pdf");$("refNameBox").hidden=m!=="name";$("refPdfBox").hidden=m!=="pdf";}
+$("refNameBtn").onclick=function(){setRef("name");};
+$("refPdfBtn").onclick=function(){ if(!isPro()){openUnlock();return;} setRef("pdf"); };
+
+/* image downscale */
+function downscale(file,maxDim,quality){return new Promise(function(res){
+  var img=new Image();img.onload=function(){
+    var w=img.width,h=img.height,scale=Math.min(1,maxDim/Math.max(w,h));
+    var c=document.createElement("canvas");c.width=Math.round(w*scale);c.height=Math.round(h*scale);
+    c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+    res(c.toDataURL("image/jpeg",quality||0.82));
+  };img.onerror=function(){res(null);};img.src=URL.createObjectURL(file);
+});}
+function renderThumbs(arr,el,ondel){el.innerHTML=arr.map(function(d,i){return '<div class="thumb"><img src="'+d+'"><button data-i="'+i+'">×</button></div>';}).join("");
+  el.querySelectorAll("button").forEach(function(b){b.onclick=function(){ondel(+b.dataset.i);};});}
+
+/* question images */
+function wireDrop(dropId,fileId,onfile){var d=$(dropId),f=$(fileId);d.onclick=function(){f.click();};f.onchange=function(e){if(e.target.files[0])onfile(e.target.files[0]);f.value="";};
+  ["dragenter","dragover"].forEach(function(ev){d.addEventListener(ev,function(e){e.preventDefault();d.classList.add("drag");});});
+  ["dragleave","drop"].forEach(function(ev){d.addEventListener(ev,function(e){e.preventDefault();d.classList.remove("drag");});});
+  d.addEventListener("drop",function(e){if(e.dataTransfer.files[0])onfile(e.dataTransfer.files[0]);});}
+wireDrop("qdrop","qfile",function(file){downscale(file,1500,0.82).then(function(d){if(d){qImages.push(d);renderThumbs(qImages,$("qthumbs"),function(i){qImages.splice(i,1);renderThumbs(qImages,$("qthumbs"),arguments.callee);});}});});
+wireDrop("adrop","afile",function(file){ if(aImages.length>=maxAnswerImgs()){ showMsg(isPro()?"That's a lot of pages!":"Free is 1 answer page. Unlock Pro for multiple.",true); if(!isPro())return; }
+  downscale(file,1600,0.84).then(function(d){if(d){aImages.push(d);renderA();}});});
+function renderA(){renderThumbs(aImages,$("athumbs"),function(i){aImages.splice(i,1);renderA();});}
+
+/* reference pdf */
+$("rdrop")&&wireDrop("rdrop","rfile",function(file){
+  if(file.type!=="application/pdf"){ $("rinfo").textContent="Please choose a PDF."; return; }
+  var mb=(file.size/1048576);
+  var reader=new FileReader();
+  reader.onload=function(){ refPdf={name:file.name,data:reader.result};
+    $("rinfo").innerHTML="Added <b>"+file.name+"</b> ("+mb.toFixed(1)+" MB)."+(mb>CONFIG.MAX_PAYLOAD_MB?" <span style='color:var(--red)'>Too large — use a chapter or fewer pages.</span>":"");
+  };
+  reader.readAsDataURL(file);
+});
+
+/* grade */
+$("gradeBtn").onclick=runGrade;
+$("demoBtn").onclick=function(){renderResult(DEMO,true);};
+var TRACE=["uploading your work securely","reading your handwriting","checking against the reference","marking each answer","writing your feedback"];
+function showMsg(t,err){var m=$("msg");m.innerHTML='<div class="msg'+(err?' err':'')+'">'+t+'</div>';}
+function clearMsg(){$("msg").innerHTML="";}
+
+function payloadSizeMB(obj){return (JSON.stringify(obj).length/1048576);}
+function runGrade(){
+  clearMsg();
+  if(!aImages.length){showMsg("Add at least one photo of your answer sheet.",true);return;}
+  if(remain()!=="∞"&&usedToday()>=CONFIG.FREE_DAILY){showMsg("You've used today's free gradings. Unlock Pro for unlimited.",true);return;}
+  var body={subject:subject,refMode:refMode,refText:(refMode==="name"?$("refText").value.trim():""),
+            questionImages:qImages,answerImages:aImages,
+            refPdf:(refMode==="pdf"&&isPro()&&refPdf?refPdf:null),pro:isPro()};
+  var sz=payloadSizeMB(body);
+  if(sz>CONFIG.MAX_PAYLOAD_MB){showMsg("Your upload is "+sz.toFixed(1)+" MB — over the limit. Remove a page or use a smaller PDF/chapter.",true);return;}
+
+  var R=$("result"),RI=$("resultInner");R.hidden=false;
+  RI.innerHTML='<div class="loadwrap"><div class="pencil">✏️</div><div class="lt" id="lt">marking…</div><div class="trace" id="trace">'+TRACE.map(function(t,i){return '<div class="ln" id="tl'+i+'">→ '+t+'</div>';}).join("")+'</div></div>';
+  R.scrollIntoView({behavior:"smooth"});
+  var step=0,ti=setInterval(function(){var el=$("tl"+step);if(el)el.classList.add("on");step++;if(step>=TRACE.length)clearInterval(ti);},900);
+
+  fetch("/api/grade",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)})
+    .then(function(res){return res.json().then(function(j){return{ok:res.ok,j:j};});})
+    .then(function(o){clearInterval(ti);
+      if(!o.ok||o.j.error){ RI.innerHTML='<div class="msg err">'+esc(o.j.error||"The grader returned an error.")+'</div>'; return; }
+      renderResult(o.j,false); bumpUse(); refreshUi(); saveMastery(subject,o.j.skills);
+    })
+    .catch(function(){clearInterval(ti);
+      RI.innerHTML='<div class="msg err">Couldn\'t reach the grader. It runs on the deployed site (Vercel) with a Gemini key set — not in local preview. Showing a sample result instead.</div>';
+      setTimeout(function(){renderResult(DEMO,true);},1500);
+    });
+}
+function esc(s){return String(s==null?"":s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
+function markClass(m,mx){if(mx&&m>=mx)return"full";if(m>0)return"part";return"zero";}
+
+function renderResult(d,isDemo){
+  var R=$("result"),RI=$("resultInner");R.hidden=false;
+  var items=(d.items||[]).map(function(it){
+    var cls=markClass(it.marks||0,it.max||0);
+    return '<div class="qitem"><div class="qh"><span class="qn">'+esc(it.question||"Answer")+'</span><span class="marks '+cls+'">'+(it.marks!=null?it.marks:"–")+' / '+(it.max!=null?it.max:"–")+'</span></div>'+
+      (it.yourAnswer?'<p class="ya">You wrote: '+esc(it.yourAnswer)+'</p>':'')+
+      (it.feedback?'<p class="fb">'+esc(it.feedback)+'</p>':'')+
+      (it.mistakeType?'<span class="mt">'+esc(it.mistakeType)+'</span>':'')+'</div>';
+  }).join("");
+  var ov=d.overall||{};
+  RI.innerHTML=
+    (isDemo?'<div class="msg">Sample result (illustrative). On the deployed site this is graded live from your photos.</div>':'')+
+    '<div class="verifybox">👀 Check what it read below — if a transcription looks wrong, retake the photo clearer and grade again.</div>'+
+    '<div class="scorecard">'+
+      '<div class="sc-top"><div class="bigscore"><div class="g">'+esc(ov.grade||"—")+'</div><div class="l">'+esc(subject)+'</div></div>'+
+      '<div class="sc-meta"><h2>'+esc(ov.summary||"Marked")+'</h2><div class="pts">Score: <b>'+(ov.score!=null?ov.score:"–")+'</b> / '+(ov.max!=null?ov.max:"–")+'</div></div></div>'+
+      (d.transcription?'<div class="transcription"><div class="tl">what i read</div>'+esc(d.transcription)+'</div>':'')+
+      items+
+    '</div>'+
+    '<p class="notice-small">TutorMind is a study aid. Handwriting reading can be imperfect — always double-check. Grades are guidance, not an official mark.</p>';
+  R.scrollIntoView({behavior:"smooth"});
+}
+
+/* mastery persistence */
+function saveMastery(subj,skills){ if(!skills||!skills.length)return;
+  try{var all=JSON.parse(localStorage.getItem("tm_mastery")||"{}");all[subj]=all[subj]||{};
+    skills.forEach(function(s){ if(s&&s.name) all[subj][s.name]=Math.max(0,Math.min(100,Math.round(s.level||0))); });
+    localStorage.setItem("tm_mastery",JSON.stringify(all));
+  }catch(e){}
+}
+
+/* unlock */
+function openUnlock(){$("unlockModal").hidden=false;$("codeInput").value="";$("codeErr").textContent="";$("codeInput").focus();}
+$("unlockBtn").onclick=openUnlock;
+$("closeUnlock").onclick=function(){$("unlockModal").hidden=true;};
+$("applyCode").onclick=function(){
+  var nrm=function(s){return (s||"").toUpperCase().replace(/[^A-Z0-9]/g,"");};
+  if(nrm($("codeInput").value)===nrm(CONFIG.PRO_CODE)){PRO_MEM=true;try{localStorage.setItem("tm_pro","1")}catch(e){}refreshUi();
+    $("codeErr").style.color="var(--green)";$("codeErr").textContent="Pro unlocked ✓";
+    setTimeout(function(){$("unlockModal").hidden=true;$("codeErr").style.color="";$("codeErr").textContent="";},700);}
+  else{$("codeErr").style.color="";$("codeErr").textContent="That code isn't right. It's TUTORMIND-PRO-2026";}
+};
+$("codeInput").addEventListener("keydown",function(e){if(e.key==="Enter")$("applyCode").click();});
+
+var DEMO={transcription:"Q2. The revolt of 1857 was caused by the greased cartridges, the annexation of Bengal, and economic exploitation of peasants.",
+  overall:{grade:"B",score:7,max:10,summary:"Good coverage, one factual slip"},
+  items:[
+    {question:"Q2 · Causes of the 1857 revolt",yourAnswer:"greased cartridges, annexation of Bengal, economic exploitation",marks:3,max:4,feedback:"Greased cartridges and economic exploitation are correct and well put. 'Annexation of Bengal' is wrong — the trigger was the Doctrine of Lapse annexations such as Jhansi and Awadh.",mistakeType:"Factual error — wrong annexation"},
+    {question:"Q3 · Significance of the revolt",yourAnswer:"end of East India Company rule, Crown took over in 1858",marks:4,max:6,feedback:"Correct on the Crown takeover. To get full marks, add the administrative reforms and the shift in British policy toward Indian princes.",mistakeType:"Incomplete — missing key points"}
+  ],
+  skills:[{name:"Revolt of 1857",level:72},{name:"Colonial policy",level:58}]};
+
+refreshUi();
+</script>
+</body></html>

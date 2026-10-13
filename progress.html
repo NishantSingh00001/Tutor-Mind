@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Progress — TutorMind</title>
+<meta name="description" content="Your mastery across subjects, built from everything you've practised.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600&family=Caveat:wght@500;600;700&family=Nunito:wght@400;500;600;700;800;900&family=Spline+Sans+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="style.css">
+</head><body>
+
+<nav><div class="wrap nav-in">
+  <a href="index.html"><div class="logo"><span class="mk">T</span>TutorMind</div></a>
+  <div class="nav-links"><a href="practice.html">Practice</a><a href="progress.html" class="active">Progress</a><a href="how.html">How it works</a></div>
+  <div class="nav-right"><a href="practice.html" class="btn btn-fill btn-sm">Practise →</a></div>
+</div></nav>
+
+<header class="phead"><div class="wrap">
+  <span class="eyebrow">Your record</span>
+  <h1>Progress</h1>
+  <p>Every paper you grade updates your mastery per skill. This is stored on your device only.</p>
+</div></header>
+
+<div class="wrap" style="padding-bottom:50px">
+  <div id="progressOut"></div>
+  <div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap">
+    <a href="practice.html" class="btn btn-fill">Grade another paper →</a>
+    <button class="btn" id="clearBtn">Clear my progress</button>
+  </div>
+</div>
+
+<footer><div class="wrap foot-in"><span>TUTORMIND</span><span><a href="how.html" style="text-decoration:underline">How it works</a></span><span class="mono" style="font-weight:400">stored on your device</span></div></footer>
+
+<script>
+var $=function(id){return document.getElementById(id);};
+function esc(s){return String(s==null?"":s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
+function load(){try{return JSON.parse(localStorage.getItem("tm_mastery")||"{}")}catch(e){return {}}}
+function render(){
+  var m=load(),subjects=Object.keys(m),out=$("progressOut");
+  if(!subjects.length){out.innerHTML='<div class="subjcard"><div class="empty">No progress yet.<br>Grade your first paper and your mastery will appear here.</div></div>';return;}
+  out.innerHTML=subjects.map(function(subj){
+    var skills=m[subj],names=Object.keys(skills);
+    var avg=Math.round(names.reduce(function(a,n){return a+skills[n];},0)/names.length);
+    var grade=avg>=85?"A":avg>=70?"B":avg>=55?"C":avg>=40?"D":"E";
+    var rows=names.sort(function(a,b){return skills[b]-skills[a];}).map(function(n){
+      return '<div class="skill-row"><span class="nm">'+esc(n)+'</span><span class="pbar"><i style="width:'+skills[n]+'%"></i></span><span class="pv">'+skills[n]+'%</span></div>';
+    }).join("");
+    return '<div class="subjcard"><div class="sh"><h3>'+esc(subj)+'</h3><span class="avg">'+grade+'</span></div>'+rows+'</div>';
+  }).join("");
+}
+$("clearBtn").onclick=function(){ try{localStorage.removeItem("tm_mastery");}catch(e){} render(); };
+render();
+</script>
+</body></html>
